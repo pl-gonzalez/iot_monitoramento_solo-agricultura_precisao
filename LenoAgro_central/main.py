@@ -17,7 +17,7 @@ TOPIC = "central"
 API_URL = "https://api.open-meteo.com/v1/forecast?latitude=23.33&longitude=46.38&daily=precipitation_probability_max,temperature_2m_min,temperature_2m_max&timezone=America%2FSao_Paulo"
 
 
-def gravar_banco(mqtt_data):
+def gravar_banco(mqtt_data: dict):
     try:
         # Efetua a conexão com o Usuário no servidor
         conn = oracledb.connect(user='rm567944', password="260299", dsn='oracle.fiap.com.br:1521/ORCL')
@@ -49,7 +49,7 @@ def gravar_banco(mqtt_data):
         return conexao
     # Callback quando conecta
 
-def ler_banco():
+def ler_banco() -> pd.DataFrame:
     os.system('cls')
     # Aqui ta se conectando
     try:
@@ -131,24 +131,24 @@ def on_message(client, userdata, msg):
         print("Erro ao processar mensagem:", e)
 
 # Retorna dados em JSON
-def consultar_open_meteo():
+def consultar_open_meteo() -> dict:
     response = requests.get(API_URL)
         
     data = response.json()
 
     return data
 
-def ultimo_registro(dados):
+def ultimo_registro(dados: pd.DataFrame) -> None:
     print("[    ULTIMO REGISTRO     ]")
     dados.columns = ['Data Hora', 'ID Device', 'Cultura', 'Temp Solo', 'Umidade Solo', 'pH Solo', 'NPK']
     print(dados.iloc[[0]])
     print('\n')
 
-def tabela(dados):
+def tabela(dados: pd.DataFrame) -> None:
     print("[    ULTIMOS REGISTROS     ]")
     print(dados.head())
 
-def previsao_semana():
+def previsao_semana() -> None:
     dados_api = consultar_open_meteo()
     # message = f'{dados_api['daily']['time'][0]};{dados_api['daily']['temperature_2m_min'][0]};{dados_api['daily']['temperature_2m_max'][0]};{dados_api['daily']['precipitation_probability_max'][0]}'
     
@@ -162,7 +162,7 @@ def previsao_semana():
     }
 
 
-def alertas(alerta_temperatura, alerta_umidade, alerta_ph, alerta_npk):
+def alertas(alerta_temperatura: float, alerta_umidade: float, alerta_ph: float, alerta_npk: str) -> None:
     print("\n")
     #'data_hora_gravacao','id_dispositivo', 'cultura', 'temp_solo', 'umidade_solo', 'ph_solo', 'npk'
 
